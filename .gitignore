@@ -1,0 +1,9 @@
+# Credenciales y archivos generados en tiempo de ejecución
+.env
+*.sql.gz
+*.dump
+*.backup
+backups/
+archivos_wal/
+reportes_enteros=1
+code.sql

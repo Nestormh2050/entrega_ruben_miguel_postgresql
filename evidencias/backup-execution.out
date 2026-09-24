@@ -1,0 +1,7 @@
+==> Iniciando respaldo lógico de 'estacionamiento' (20260924_110900)
+==> Respaldo creado: /backups/estacionamiento_20260924_110900.dump (45.3M)
+==> Verificando integridad del respaldo
+    Objetos listados: 201
+==> Aplicando retención (14 días)
+==> Respaldo completado OK
+    Log: /backups/estacionamiento_20260924_110900.log

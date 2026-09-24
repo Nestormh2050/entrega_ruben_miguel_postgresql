@@ -1,0 +1,37 @@
+SET
+CREATE FUNCTION
+SET
+ cierre_id | residentes | total_minutos | total_cargo 
+-----------+------------+---------------+-------------
+         1 |          3 |          3510 |      175.50
+(1 row)
+
+== Intento de cierre duplicado (esperado: ERROR) ==
+psql:/tmp/monthly-close.sql:168: ERROR:  El mes 2026-08-01 ya fue cerrado. Para auditar/recalcular use un periodo nuevo.
+HINT:  Los datos históricos nunca se eliminan; si hubo un error, registra un cierre correctivo.
+CONTEXT:  PL/pgSQL function proceder_cierre_mensual(date,text) line 22 at RAISE
+== Periodo inválido (esperado: ERROR) ==
+psql:/tmp/monthly-close.sql:172: ERROR:  El periodo debe ser el primer día de un mes (ej. 2026-08-01)
+CONTEXT:  PL/pgSQL function proceder_cierre_mensual(date,text) line 11 at RAISE
+== Cierres registrados ==
+ id |  periodo   | ejecutado_por |         ejecutado_en          
+----+------------+---------------+-------------------------------
+  1 | 2026-08-01 | NRamirez      | 2026-09-24 11:04:59.319167-06
+(1 row)
+
+== Detalle por residente del mes cerrado ==
+  periodo   |    apellidos    | nombre |  placa  | minutos | cargo_total | pagado 
+------------+-----------------+--------+---------+---------+-------------+--------
+ 2026-08-01 | Hernández Pérez | Lucía  | RES-102 |    1020 |       51.00 | f
+ 2026-08-01 | Morales Sánchez | Daniel | RES-101 |    1590 |       79.50 | f
+ 2026-08-01 | Torres Nava     | Sofía  | RES-103 |     900 |       45.00 | f
+(3 rows)
+
+== Cargos MENSUALES generados ==
+ id |  tipo   | monto |  estado   |                concepto                 
+----+---------+-------+-----------+-----------------------------------------
+ 14 | MENSUAL | 79.50 | PENDIENTE | Cuota mensual 2026-08 - Morales Sánchez
+ 15 | MENSUAL | 51.00 | PENDIENTE | Cuota mensual 2026-08 - Hernández Pérez
+ 16 | MENSUAL | 45.00 | PENDIENTE | Cuota mensual 2026-08 - Torres Nava
+(3 rows)
+

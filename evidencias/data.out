@@ -1,0 +1,21 @@
+SET
+INSERT 0 3
+INSERT 0 3
+INSERT 0 15
+INSERT 0 4
+DO
+INSERT 0 2
+UPDATE 2
+      concepto      | cantidad 
+--------------------+----------
+ tipos              | 3
+ tarifas            | 3
+ vehículos          | 15
+ residentes         | 4
+ estancias          | 33
+ estancias abiertas | 4
+ cargos             | 13
+ pagos              | 2
+ auditoría          | 104
+(9 rows)
+

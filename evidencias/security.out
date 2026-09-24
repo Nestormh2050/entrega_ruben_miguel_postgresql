@@ -1,0 +1,91 @@
+SET
+REVOKE
+GRANT
+REVOKE
+REVOKE
+DO
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+REVOKE
+GRANT
+GRANT
+GRANT
+CREATE VIEW
+COMMENT
+GRANT
+REVOKE
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT ROLE
+GRANT ROLE
+GRANT
+REVOKE
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+ALTER DEFAULT PRIVILEGES
+ALTER DEFAULT PRIVILEGES
+ALTER DEFAULT PRIVILEGES
+DO
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+== 5.1 Reportes: SELECT permitido sobre vista enmascarada ==
+SET
+ residentes_visibles 
+---------------------
+               18004
+(1 row)
+
+                 chequeo                 
+-----------------------------------------
+ SELECT directo sobre PII (debe FALLAR):
+(1 row)
+
+== 5.2 Reportes: INTENTO de escritura (debe FALLAR) ==
+== 5.3 Aplicación: flujo normal de entrada/salida (transacción revocada) ==
+RESET
+BEGIN
+SET
+ resultado_salida  
+-------------------
+ (3000094,10,5.00)
+(1 row)
+
+ROLLBACK
+== 5.4 Aplicación: INTENTO de DELETE sobre estancia (debe FALLAR) ==
+SET
+RESET
+== 5.5 Aplicación: INTENTO de leer auditoría (debe FALLAR) ==
+SET
+RESET
+== 5.6 Soporte: lectura de auditoría permitida ==
+SET
+ filas_auditoria |            ultima             
+-----------------+-------------------------------
+           78118 | 2026-09-24 11:05:15.553633-06
+(1 row)
+
+RESET
+== 5.7 Reasignación de permisos (ejemplo de REVOKE/GRANT) ==
+REVOKE
+GRANT
+END security.sql - roles y privilegios aplicados

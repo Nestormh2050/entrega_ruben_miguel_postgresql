@@ -1,0 +1,98 @@
+>> Mes de referencia para reportes mensuales: 2026-08-01
+== CONSULTA 1: VehÃ­culos actualmente dentro ==
+  placa  |        tipo        |  marca  | modelo  |          entrada_en           | minutos_dentro 
+---------+--------------------+---------+---------+-------------------------------+----------------
+ VIS-205 | Vehículo visitante | Toyota  | Hilux   | 2026-09-23 11:04:49.785626-06 |           1440
+ RES-102 | Vehículo residente | Toyota  | Corolla | 2026-09-24 03:04:49.785626-06 |            480
+ OFI-003 | Vehículo oficial   | Honda   | CR-V    | 2026-09-24 08:04:49.785626-06 |            180
+ VIS-204 | Vehículo visitante | Renault | Duster  | 2026-09-24 09:04:49.785626-06 |            120
+(4 rows)
+
+== CONSULTA 2: DuraciÃ³n e importe de una estancia ==
+ id |  placa  |       tipo       |           tarifa           | precio_minuto |       entrada_en       |       salida_en        | duracion_minutos | importe_calculado | duracion_stored | importe_stored 
+----+---------+------------------+----------------------------+---------------+------------------------+------------------------+------------------+-------------------+-----------------+----------------
+  1 | OFI-001 | Vehículo oficial | Tarifa oficial - sin costo |          0.00 | 2026-08-02 07:00:00-06 | 2026-08-02 11:00:00-06 |              240 |              0.00 |             240 |           0.00
+(1 row)
+
+== CONSULTA 3: Reporte mensual de residentes ==
+ residente_id | nombre  |    apellidos    |  placa  | tarjeta_acceso |    mes     | estancias | minutos_total | importe_total 
+--------------+---------+-----------------+---------+----------------+------------+-----------+---------------+---------------
+            1 | Daniel  | Morales Sánchez | RES-101 | TAC-0101       | 2026-08-01 |         3 |          1590 |         79.50
+            2 | Lucía   | Hernández Pérez | RES-102 | TAC-0102       | 2026-08-01 |         2 |          1020 |         51.00
+            3 | Sofía   | Torres Nava     | RES-103 | TAC-0103       | 2026-08-01 |         2 |           900 |         45.00
+            4 | Roberto | Vázquez Luna    | RES-104 | TAC-0104       | 2026-08-01 |         0 |             0 |             0
+(4 rows)
+
+== CONSULTA 4: Ingresos por dÃ­a y tipo de vehÃ­culo ==
+    dia     | tipo_vehiculo | estancias | ingresos 
+------------+---------------+-----------+----------
+ 2026-09-23 | RESIDENTE     |         1 |    24.00
+ 2026-09-23 | VISITANTE     |         1 |    30.00
+ 2026-09-22 | RESIDENTE     |         1 |    27.00
+ 2026-09-22 | VISITANTE     |         1 |    22.50
+ 2026-09-21 | RESIDENTE     |         1 |    27.00
+ 2026-09-21 | VISITANTE     |         1 |    45.00
+ 2026-09-20 | RESIDENTE     |         1 |    27.00
+ 2026-09-20 | VISITANTE     |         1 |   150.00
+ 2026-09-19 | VISITANTE     |         1 |    60.00
+ 2026-09-18 | RESIDENTE     |         1 |    24.00
+ 2026-09-17 | VISITANTE     |         1 |    90.00
+ 2026-08-26 | VISITANTE     |         1 |   180.00
+ 2026-08-23 | VISITANTE     |         1 |   120.00
+ 2026-08-21 | RESIDENTE     |         1 |    24.00
+ 2026-08-17 | VISITANTE     |         1 |    60.00
+ 2026-08-16 | RESIDENTE     |         1 |    28.50
+ 2026-08-15 | RESIDENTE     |         1 |    27.00
+ 2026-08-13 | VISITANTE     |         1 |    90.00
+ 2026-08-09 | VISITANTE     |         1 |    20.00
+ 2026-08-06 | RESIDENTE     |         1 |    21.00
+ 2026-08-06 | VISITANTE     |         1 |    30.00
+ 2026-08-03 | RESIDENTE     |         1 |    24.00
+ 2026-08-03 | VISITANTE     |         1 |    60.00
+ 2026-08-02 | RESIDENTE     |         2 |    51.00
+(24 rows)
+
+== CONSULTA 5: Promedio de permanencia por tipo de vehÃ­culo ==
+  codigo   |       nombre       | estancias_cerradas | promedio_min | promedio_min_sin_cero 
+-----------+--------------------+--------------------+--------------+-----------------------
+ RESIDENTE | Vehículo residente |                 12 |       507.50 |                507.50
+ OFICIAL   | Vehículo oficial   |                  4 |       300.00 |                300.00
+ VISITANTE | Vehículo visitante |                 13 |       147.31 |                147.31
+(3 rows)
+
+== CONSULTA 6: VehÃ­culos con mÃ¡s de una estancia abierta (esperado: 0 filas) ==
+ vehiculo_id | placa | estancias_abiertas | ids_estancias 
+-------------+-------+--------------------+---------------
+(0 rows)
+
+== CONSULTA 7a: Salidas <= entradas (esperado: 0 filas) ==
+ id | placa | entrada_en | salida_en 
+----+-------+------------+-----------
+(0 rows)
+
+== CONSULTA 7b: DuraciÃ³n inconsistente (almacenada vs calculada) (esperado: 0 filas) ==
+ id | placa | almacenada | calculada | cargo | cargo_calculado 
+----+-------+------------+-----------+-------+-----------------
+(0 rows)
+
+== CONSULTA 7c: periodo de mes incoherente con la entrada (esperado: 0 filas) ==
+ id | placa | entrada_en | periodo 
+----+-------+------------+---------
+(0 rows)
+
+== CONSULTA 8: Mayor tiempo acumulado en el mes actual ==
+  placa  |        tipo        | estancias_cerradas | minutos_acumulados | importe_acumulado 
+---------+--------------------+--------------------+--------------------+-------------------
+ RES-101 | Vehículo residente |                  2 |               1020 |             51.00
+ RES-102 | Vehículo residente |                  1 |                540 |             27.00
+ RES-104 | Vehículo residente |                  1 |                540 |             27.00
+ RES-103 | Vehículo residente |                  1 |                480 |             24.00
+ VIS-207 | Vehículo visitante |                  1 |                300 |            150.00
+ VIS-206 | Vehículo visitante |                  1 |                180 |             90.00
+ OFI-002 | Vehículo oficial   |                  1 |                120 |              0.00
+ VIS-201 | Vehículo visitante |                  1 |                120 |             60.00
+ VIS-202 | Vehículo visitante |                  1 |                 90 |             45.00
+ VIS-208 | Vehículo visitante |                  1 |                 60 |             30.00
+ VIS-203 | Vehículo visitante |                  1 |                 45 |             22.50
+(11 rows)
+

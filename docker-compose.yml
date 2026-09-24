@@ -1,0 +1,40 @@
+# =============================================================================
+# DBA - Prueba técnica Neology
+# Entorno local de PostgreSQL para el sistema de control de acceso vehicular.
+#
+# Nota de seguridad:
+#   La contraseña se define a través de la variable de entorno PG_PASSWORD
+#   para evitar exponer secretos en el repositorio. Si la variable no está
+#   definida, se usa un valor de desarrollo con advertencia explícita.
+#
+# Levantar el contenedor:
+#   docker compose up -d
+#
+# Verificar:
+#   docker compose ps
+#   docker compose exec db psql -U parking -d estacionamiento
+# =============================================================================
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: parking_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: park_superuser
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-SoloDesarrolloCambiar123}
+      POSTGRES_DB: estacionamiento
+      # Zona horaria del servidor (consistente con la lógica de negocio)
+      TZ: America/Mexico_City
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U park_superuser -d estacionamiento"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

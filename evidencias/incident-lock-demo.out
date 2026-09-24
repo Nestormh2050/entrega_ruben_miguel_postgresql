@@ -1,0 +1,42 @@
+=========== INCIDENTE: tipo_vehiculo bloqueada — DEMO ===========
+== [1] Sesión A (migración) toma ACCESS EXCLUSIVE sobre tipo_vehiculo ==
+== [2] Sesión B (app): INSERT de nuevo tipo_vehiculo — queda a la espera ==
+
+== [3] DIAGNÓSTICO del DBA ==
+    [3a] Sesiones activas del cluster (pg_stat_activity)
+ pid  |    usename     | state  | wait_event_type | wait_event |    xact_dur     |                       query                        
+------+----------------+--------+-----------------+------------+-----------------+----------------------------------------------------
+ 1271 | park_superuser | active | Timeout         | PgSleep    | 00:00:02.00243  | BEGIN; LOCK TABLE parking.tipo_vehiculo IN ACCESS 
+ 1281 | park_superuser | active | Lock            | relation   | 00:00:01.000706 | SET statement_timeout='30000'; INSERT INTO parking
+(2 rows)
+
+    [3b] Árbol de bloqueo: quién bloquea a quién
+ bloqueado_pid | espera |              bloqueada              | bloqueante_pid |             bloqueante              
+---------------+--------+-------------------------------------+----------------+-------------------------------------
+          1281 | Lock   | SET statement_timeout='30000'; INSE |           1271 | BEGIN; LOCK TABLE parking.tipo_vehi
+(1 row)
+
+    [3c] Locks sobre tipo_vehiculo (modo y estado granted)
+ sesion |        modo         | concedido |     tabla     
+--------+---------------------+-----------+---------------
+   1271 | AccessExclusiveLock | t         | tipo_vehiculo
+   1281 | RowExclusiveLock    | f         | tipo_vehiculo
+(2 rows)
+
+
+== [4] DECISIÓN: terminar la migración colgada (pg_terminate_backend) ==
+    Se termina el backend 1271 (sesión A).
+ terminado 
+-----------
+ t
+(1 row)
+
+
+== [5] La sesión B completa su INSERT (evidencia de desbloqueo) ==
+SET
+INSERT 0 1
+
+== [6] Limpieza de la fila de prueba ==
+DELETE 1
+
+=========== FIN DEMO — tipo_vehiculo operativa de nuevo ===========

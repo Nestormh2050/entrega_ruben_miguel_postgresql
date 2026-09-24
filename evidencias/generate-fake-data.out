@@ -1,0 +1,27 @@
+SET
+INSERT 0 60000
+INSERT 0 18000
+Iniciando carga masiva de estancias...
+SET
+ALTER TABLE
+ setseed 
+---------
+ 
+(1 row)
+
+INSERT 0 3000000
+INSERT 0 60
+ALTER TABLE
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+      concepto      |  total  
+--------------------+---------
+ estancias          | 3000093
+ estancias abiertas |      64
+ vehículos          |   60015
+ residentes         |   18004
+(4 rows)
+

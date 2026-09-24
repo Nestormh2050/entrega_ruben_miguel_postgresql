@@ -1,0 +1,135 @@
+Timing is on.
+Time: 1.250 ms
+############################################################
+## ESCENARIO: DESPUES
+## Mes de medición: 2026-07-01
+############################################################
+
+============= Q8 ORIGINAL: Mayor tiempo acumulado (join directo) =============
+                                                               QUERY PLAN                                                               
+----------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual time=480.195..480.200 rows=15 loops=1)
+   Buffers: shared hit=5 read=38202 written=4
+   ->  Sort (actual time=480.193..480.197 rows=15 loops=1)
+         Sort Key: (sum(e.duracion_minutos)) DESC
+         Sort Method: top-N heapsort  Memory: 28kB
+         Buffers: shared hit=5 read=38202 written=4
+         ->  HashAggregate (actual time=477.485..479.317 rows=5000 loops=1)
+               Group Key: v.placa, tv.nombre
+               Batches: 1  Memory Usage: 3089kB
+               Buffers: shared hit=2 read=38202 written=4
+               ->  Hash Join (actual time=40.272..380.164 rows=250000 loops=1)
+                     Hash Cond: (v.tipo_vehiculo_id = tv.id)
+                     Buffers: shared hit=2 read=38202 written=4
+                     ->  Hash Join (actual time=40.236..341.770 rows=250000 loops=1)
+                           Hash Cond: (e.vehiculo_id = v.id)
+                           Buffers: shared hit=1 read=38202 written=4
+                           ->  Bitmap Heap Scan on estancia e (actual time=19.239..219.854 rows=250000 loops=1)
+                                 Recheck Cond: (periodo = '2026-07-01'::date)
+                                 Filter: (salida_en IS NOT NULL)
+                                 Heap Blocks: exact=37038
+                                 Buffers: shared hit=1 read=37344 written=4
+                                 ->  Bitmap Index Scan on ix_estancia_periodo_vehiculo (actual time=13.866..13.866 rows=250000 loops=1)
+                                       Index Cond: (periodo = '2026-07-01'::date)
+                                       Buffers: shared read=307
+                           ->  Hash (actual time=20.769..20.770 rows=60015 loops=1)
+                                 Buckets: 65536  Batches: 1  Memory Usage: 3912kB
+                                 Buffers: shared read=858
+                                 ->  Seq Scan on vehiculo v (actual time=0.010..9.310 rows=60015 loops=1)
+                                       Buffers: shared read=858
+                     ->  Hash (actual time=0.018..0.018 rows=3 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                           Buffers: shared hit=1
+                           ->  Seq Scan on tipo_vehiculo tv (actual time=0.005..0.005 rows=3 loops=1)
+                                 Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=502 read=37
+ Planning Time: 4.690 ms
+ Execution Time: 481.755 ms
+(38 rows)
+
+Time: 490.466 ms
+
+============= Q8 OPTIMIZADO: agregar por vehículo, luego unir catálogos =============
+                                                                    QUERY PLAN                                                                     
+---------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual time=104.682..104.687 rows=15 loops=1)
+   Buffers: shared hit=14326 read=2650
+   ->  Sort (actual time=104.681..104.684 rows=15 loops=1)
+         Sort Key: (sum(e.duracion_minutos)) DESC
+         Sort Method: top-N heapsort  Memory: 27kB
+         Buffers: shared hit=14326 read=2650
+         ->  Hash Join (actual time=99.395..103.777 rows=5000 loops=1)
+               Hash Cond: (v.tipo_vehiculo_id = tv.id)
+               Buffers: shared hit=14326 read=2650
+               ->  Hash Join (actual time=99.369..102.654 rows=5000 loops=1)
+                     Hash Cond: (e.vehiculo_id = v.id)
+                     Buffers: shared hit=14325 read=2650
+                     ->  HashAggregate (actual time=80.755..82.370 rows=5000 loops=1)
+                           Group Key: e.vehiculo_id
+                           Batches: 1  Memory Usage: 3089kB
+                           Buffers: shared hit=14325 read=1792
+                           ->  Index Only Scan using ix_estancia_periodo_cerrada_cov on estancia e (actual time=0.061..32.024 rows=250000 loops=1)
+                                 Index Cond: (periodo = '2026-07-01'::date)
+                                 Heap Fetches: 2
+                                 Buffers: shared hit=14325 read=1792
+                     ->  Hash (actual time=18.387..18.388 rows=60015 loops=1)
+                           Buckets: 65536  Batches: 1  Memory Usage: 3912kB
+                           Buffers: shared read=858
+                           ->  Seq Scan on vehiculo v (actual time=0.010..7.105 rows=60015 loops=1)
+                                 Buffers: shared read=858
+               ->  Hash (actual time=0.014..0.014 rows=3 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on tipo_vehiculo tv (actual time=0.006..0.007 rows=3 loops=1)
+                           Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=3 read=4
+ Planning Time: 0.331 ms
+ Execution Time: 105.985 ms
+(34 rows)
+
+Time: 106.956 ms
+
+============= Q4: Ingresos por día y tipo (rango 7 días) =============
+                                                                                                 QUERY PLAN                                                                                                 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate (actual time=168.411..183.315 rows=11 loops=1)
+   Group Key: (((e.salida_en AT TIME ZONE 'America/Mexico_City'::text))::date), tv.codigo
+   Buffers: shared hit=868 read=16936 written=3, temp read=314 written=315
+   ->  Sort (actual time=166.129..173.257 rows=62495 loops=1)
+         Sort Key: (((e.salida_en AT TIME ZONE 'America/Mexico_City'::text))::date) DESC, tv.codigo
+         Sort Method: external merge  Disk: 2512kB
+         Buffers: shared hit=868 read=16936 written=3, temp read=314 written=315
+         ->  Hash Join (actual time=21.388..147.704 rows=62495 loops=1)
+               Hash Cond: (v.tipo_vehiculo_id = tv.id)
+               Buffers: shared hit=862 read=16936 written=3
+               ->  Hash Join (actual time=21.317..118.158 rows=62495 loops=1)
+                     Hash Cond: (e.vehiculo_id = v.id)
+                     Buffers: shared hit=861 read=16936 written=3
+                     ->  Bitmap Heap Scan on estancia e (actual time=8.357..83.092 rows=62495 loops=1)
+                           Recheck Cond: ((salida_en >= ('2026-07-13'::date AT TIME ZONE 'America/Mexico_City'::text)) AND (salida_en < ('2026-07-20'::date AT TIME ZONE 'America/Mexico_City'::text)))
+                           Filter: (cargo > '0'::numeric)
+                           Rows Removed by Filter: 14
+                           Heap Blocks: exact=16863
+                           Buffers: shared hit=3 read=16936 written=3
+                           ->  Bitmap Index Scan on ix_estancia_salida_cerrada (actual time=6.146..6.146 rows=62509 loops=1)
+                                 Index Cond: ((salida_en >= ('2026-07-13'::date AT TIME ZONE 'America/Mexico_City'::text)) AND (salida_en < ('2026-07-20'::date AT TIME ZONE 'America/Mexico_City'::text)))
+                                 Buffers: shared hit=3 read=73
+                     ->  Hash (actual time=12.734..12.735 rows=60015 loops=1)
+                           Buckets: 65536  Batches: 1  Memory Usage: 2974kB
+                           Buffers: shared hit=858
+                           ->  Seq Scan on vehiculo v (actual time=0.006..4.970 rows=60015 loops=1)
+                                 Buffers: shared hit=858
+               ->  Hash (actual time=0.023..0.023 rows=3 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on tipo_vehiculo tv (actual time=0.007..0.008 rows=3 loops=1)
+                           Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=34 read=11
+ Planning Time: 0.817 ms
+ Execution Time: 185.094 ms
+(36 rows)
+
+Time: 188.558 ms

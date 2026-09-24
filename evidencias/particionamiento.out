@@ -1,0 +1,28 @@
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+DO
+psql:/tmp/particionamiento.sql:58: NOTICE:  trigger "trg_estancia_p_periodo" for relation "parking.estancia_p" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+                              tabla                              |     tipo     
+-----------------------------------------------------------------+--------------
+ estancia                                                        | tabla
+ estancia_2026_09                                                | tabla
+ estancia_2026_09_periodo_salida_en_vehiculo_id_duracion_min_idx | i
+ estancia_2026_09_salida_en_idx                                  | i
+ estancia_2026_09_vehiculo_id_idx                                | i
+ estancia_2026_10                                                | tabla
+ estancia_2026_10_periodo_salida_en_vehiculo_id_duracion_min_idx | i
+ estancia_2026_10_salida_en_idx                                  | i
+ estancia_2026_10_vehiculo_id_idx                                | i
+ estancia_2026_11                                                | tabla
+ estancia_2026_11_periodo_salida_en_vehiculo_id_duracion_min_idx | i
+ estancia_2026_11_salida_en_idx                                  | i
+ estancia_2026_11_vehiculo_id_idx                                | i
+ estancia_id_seq                                                 | S
+ estancia_p                                                      | particionada
+ estancia_pkey                                                   | i
+(16 rows)
+

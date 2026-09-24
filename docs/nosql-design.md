@@ -15,7 +15,7 @@
 - Se necesita separar **OLTP (transaccional)** de **OLAP/lecturas analíticas**
   sin duplicar esfuerzo de integración por cada reporte.
 
-## 2. Piedra: divide la arquitectura en dos sistemas
+## 2. Divide la arquitectura en dos sistemas
 
 ```
                  +--------------------+
